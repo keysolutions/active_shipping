@@ -208,10 +208,27 @@ module ActiveShipping
               build_contact_address_nodes(xml, origin)
             end
 
-            xml.ShippingChargesPayment do
-              xml.PaymentType('SENDER')
-              xml.Payor do
-                build_shipment_responsible_party_node(xml, options[:shipper] || origin)
+            if options[:bill_receiver]
+              xml.ShippingChargesPayment do
+                xml.PaymentType('RECIPIENT')
+                xml.Payor do
+                  xml.ResponsibleParty do
+                    # TODO: case of different freight account numbers?
+                    xml.AccountNumber(options[:billing_account])
+                    xml.Contact do
+                      xml.PersonName(destination.name)
+                      xml.CompanyName(destination.company_name)
+                      xml.PhoneNumber(destination.phone)
+                    end
+                  end
+                end
+              end
+            else
+              xml.ShippingChargesPayment do
+                xml.PaymentType('SENDER')
+                xml.Payor do
+                  build_shipment_responsible_party_node(xml, options[:shipper] || origin)
+                end
               end
             end
 
