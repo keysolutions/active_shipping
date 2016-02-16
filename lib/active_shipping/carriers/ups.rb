@@ -415,6 +415,18 @@ module ActiveShipping
                   end
                 end
               end
+            elsif options[:bill_receiver]
+              xml.ItemizedPaymentInformation do
+                xml.ShipmentCharge do
+                  xml.Type('01')
+                  xml.BillReceiver do
+                    xml.AccountNumber(options[:billing_account])
+                    xml.Address do
+                      xml.PostalCode destination.postal_code
+                    end
+                  end
+                end
+              end
             else
               xml.ItemizedPaymentInformation do
                 xml.ShipmentCharge do
